@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
-import { fromEvent } from 'rxjs';
+import { Observable, fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
 import { debounceTime, pluck, distinctUntilChanged, switchMapTo, switchMap } from 'rxjs/operators';
 
@@ -19,18 +19,20 @@ export class SearchComponent implements AfterViewInit {
 
   @ViewChild('searchInput', {static: true}) searchInput: ElementRef = {} as ElementRef;
 
+  
+
   ngAfterViewInit(): void {
-    // let term = '';
-    // // debugger
-    // const searchInput$ = fromEvent(this.searchInput.nativeElement, 'keyup');
-    // searchInput$.pipe(
-    //   debounceTime(500),
-    //   pluck('target','value'),
-    //   distinctUntilChanged(),
-    //   // switchMapTo(
-    //   //   ajax.getJSON('https://api.toandfrom.com/v2/product?search=ear&limit=4')
-    //   // ),
-    // ).subscribe({next : value => console.log(ajax.getJSON(`https://api.toandfrom.com/v2/product?search=${value}&limit=4`))});
+    let term = '';
+    // debugger
+    const searchInput$ = fromEvent(this.searchInput.nativeElement, 'keyup');
+    searchInput$.pipe(
+      debounceTime(500),
+      pluck('target','value'),
+      distinctUntilChanged(),
+      switchMap( value =>
+        ajax.getJSON(`https://api.toandfrom.com/v2/product?search=${value}&limit=4`)
+      )
+    ).subscribe(value => console.log(value));
   }
 
   search(event: any) {

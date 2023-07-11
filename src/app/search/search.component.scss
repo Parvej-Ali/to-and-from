@@ -1,0 +1,32 @@
+.search-form {
+    padding: 22px 24px 18px;
+    display: flex;
+    justify-content: center;
+  }
+  .search-form input {
+    border: none;
+    border-bottom: 1px solid #dcdfe4;
+    padding: 12px 14px;
+    font-family: 'Geomanist';
+    font-size: 14px;
+    outline: none;
+    color: #545e6f;
+  }
+  .search-form input::placeholder {
+    color: #777d8c;
+  }
+  .search-form input:focus {
+    border-bottom-color: black;
+  }
+  .search-result {
+    margin: auto;
+    width: 30rem;
+    box-shadow: 1px 1px 4px 0px #777d8c;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 1rem;
+  }
+  .result-count {
+    color: #777d8c;
+  }

@@ -1,0 +1,51 @@
+.filter-form {
+    position: absolute;
+    width: 22rem;
+    margin: 2rem;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 1px 1px 4px 0px #777d8c;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.filter-header p {
+    font-family: CircularXX;
+    font-size: medium;
+}
+.filter-header button {
+    color: white;
+    box-shadow: none;
+    border: none;
+    font-size: medium;
+    background-color: rgb(30, 100, 116);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+}
+.input-container {
+    display: flex;
+    margin: 0.5rem 0px;
+    padding: 0.8rem;
+    border-radius: 0.3rem;
+    flex-direction: column;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+.input-container label {
+    font-size: small;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.46);
+}
+.input-container select {
+    border: none;
+    margin-top: 0.5rem;
+    outline: none;
+    font-size: medium;
+    background-color: white;
+    color: rgba(0, 0, 0, 0.36);
+}

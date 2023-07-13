@@ -1,7 +1,10 @@
 import { Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
-import { Observable, fromEvent } from 'rxjs';
+import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
-import { debounceTime, pluck, distinctUntilChanged, switchMapTo, switchMap } from 'rxjs/operators';
+import { debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { FilterData } from '../interfaces/filter-interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FilterServiceService } from '../filter-service.service';
 
 @Component({
   selector: 'app-search',
@@ -27,7 +30,7 @@ import { debounceTime, pluck, distinctUntilChanged, switchMapTo, switchMap } fro
             <option>Newest</option><hr/>
             <option>Promotions</option><hr/>
             <option>To&From MarketPlace</option>
-          </select>
+          </select> <!-- sort-by -->
         </div> <!-- filter-container -->
         <h1 class="logo">To&From</h1>
 
@@ -45,7 +48,13 @@ import { debounceTime, pluck, distinctUntilChanged, switchMapTo, switchMap } fro
         </div> <!-- product-show -->
       </div> <!-- header-bottom -->
 
-      <app-gift-filter *ngIf="this.filterReady"></app-gift-filter>
+      <app-gift-filter 
+        *ngIf="this.filterReady"
+        [pronoun]="pronoun"
+        [occasion]="occasion"
+        [relationship]="relationship"
+        (applyFilters)="applyFilters($event)">
+      </app-gift-filter>
 
       <div *ngIf="this.inputReady" class="search-result">
         <p>Search Results</p> <span class="result-count">results</span>
@@ -60,6 +69,36 @@ export class SearchComponent implements AfterViewInit {
 
   filterReady = false;
   inputReady = false;
+
+  pronoun = '';
+  occasion = '';
+  relationship = '';
+
+  constructor(
+    private filterService: FilterServiceService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) { 
+    this.getProductFilters();
+  }
+
+  getProductFilters(): void {
+    this.filterService.loadPronoun().subscribe((data: any) => {
+      this.filterService.setPronoun(data.data);
+      this.pronoun = this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString();
+    });
+    this.filterService.loadOccasion().subscribe((data: any) => {
+      this.filterService.setOccasion(data.data);
+      this.occasion = this.filterService.getOccasionName(this.activatedRoute.snapshot.queryParamMap.get('occasion') || '').toString();
+    })
+    this.filterService.loadRelationship().subscribe((data: any) => {
+      this.filterService.setRelationship(data.data);
+      this.relationship = this.filterService.getRelationshipName(this.activatedRoute.snapshot.queryParamMap.get('relationship') || '').toString();
+    });
+    console.log(this.activatedRoute.snapshot.queryParamMap.get('gender'));
+    console.log(this.activatedRoute.snapshot.queryParamMap.get('occasion'));
+    console.log(this.activatedRoute.snapshot.queryParamMap.get('relationship'));
+  }
 
   ngAfterViewInit(): void {
     let term = '';
@@ -79,4 +118,28 @@ export class SearchComponent implements AfterViewInit {
     event.preventDefault();
   }
 
+  applyFilters(data: FilterData){
+    console.log(data);
+
+    let params: {gender?: String, occasion?: String, relationship?: String} = {};
+
+    if(this.filterService.getPronounId(data.pronoun) !== '') {
+      this.pronoun = data.pronoun;
+      params.gender = this.filterService.getPronounId(data.pronoun);
+    }
+    if(this.filterService.getOccasionId(data.occasion) !== '') {
+      this.occasion = data.occasion;
+      params.occasion = this.filterService.getOccasionId(data.occasion);
+    }
+    if(this.filterService.getRelationshipId(data.relationship) !== '') {
+      this.relationship = data.relationship;
+      params.relationship = this.filterService.getRelationshipId(data.relationship);
+    }
+    this.filterReady = false;
+
+    this.router.navigate([],{
+      relativeTo: this.activatedRoute,
+      queryParams: params
+    });
+  }
 }

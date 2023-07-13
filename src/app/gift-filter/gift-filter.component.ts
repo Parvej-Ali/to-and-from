@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { FilterServiceService } from '../filter-service.service';
+import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
 
 @Component({
   selector: 'app-gift-filter',
@@ -12,20 +13,23 @@ import { FilterServiceService } from '../filter-service.service';
       </div>
       <div class="input-container">
         <label>Gift For*</label>
-        <select formControlName="pronoun" name="pronoun">
-          <option>Select pronoun</option>
+        <select formControlName="pronoun" [value]="occasion" name="pronoun">
+          <option disabled>Select pronoun</option>
+          <option *ngFor="let item of pronounData" [selected]="item.name == pronoun">{{item.name}}</option>
         </select>
       </div>
       <div class="input-container">
         <label>Occasion</label>
         <select formControlName="occasion" name="occasion">
-          <option>Select occasion</option>
+          <option disabled>Select occasion</option>
+          <option *ngFor="let item of occasionData" [selected]="item.name == occasion">{{item.name}}</option>
         </select>
       </div>
       <div class="input-container">
         <label>Relationship</label>
         <select formControlName="relationship" name="relationship">
-          <option>Select relationship</option>
+          <option disabled>Select relationship</option>
+          <option *ngFor="let item of relationshipData" [selected]="item.name == relationship">{{item.name}}</option>
         </select>
       </div>
     </form>
@@ -33,16 +37,23 @@ import { FilterServiceService } from '../filter-service.service';
   styleUrls: ['./gift-filter.component.scss']
 })
 
-export class GiftFilterComponent implements AfterViewInit{
+export class GiftFilterComponent implements OnChanges{
 
   @Input()
-  pronoun = '';
+  pronoun = 'Select pronoun';
 
   @Input()
-  occasion = '';
+  occasion = 'Select occasion';
 
   @Input()
-  relationship = '';
+  relationship = 'Select relationship';
+
+  @Output()
+  applyFilters: EventEmitter<FilterData> = new EventEmitter()
+
+  pronounData: FilterOptions[] = [];
+  occasionData: FilterOptions[] = [];
+  relationshipData: FilterOptions[] = [];
 
   filterForm = this.formBuilder.group({
     pronoun: this.pronoun,
@@ -53,15 +64,26 @@ export class GiftFilterComponent implements AfterViewInit{
   constructor(
     private formBuilder: FormBuilder,
     private filterService: FilterServiceService
-  ) {}
+  ) {
+    this.pronounData = this.filterService.getPronoun();
+    this.occasionData = this.filterService.getOccasion();
+    this.relationshipData = this.filterService.getRelationship();
+  }
 
-  ngAfterViewInit(): void {
-    console.log(this.filterService.getOccasion(),this.filterService.getPronoun(),this.filterService.getRelationship());
+  ngOnChanges(changes: SimpleChanges): void {
+    this.filterForm.value.pronoun = this.pronoun;
+    this.filterForm.value.occasion = this.occasion;
+    this.filterForm.value.relationship = this.relationship;
+    console.log(this.pronoun, this.occasion, this.relationship);
+    console.log(this.filterForm.value);
   }
 
   OnSubmit(): void {
-    console.log(this.filterForm.value);
-    this.filterForm.value.occasion = 'Select pronoun'
+    let data: FilterData = Object.assign({
+      pronoun: this.filterForm.value.pronoun,
+      occasion: this.filterForm.value.occasion,
+      relationship: this.filterForm.value.relationship
+    });
+    this.applyFilters.emit(data);
   }
-
 }

@@ -13,23 +13,23 @@ import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
       </div>
       <div class="input-container">
         <label>Gift For*</label>
-        <select formControlName="pronoun" [value]="occasion" name="pronoun">
-          <option disabled>Select pronoun</option>
-          <option *ngFor="let item of pronounData" [selected]="item.name == pronoun">{{item.name}}</option>
+        <select formControlName="pronoun"  name="pronoun">
+          <option disabled value="">Select pronoun</option>
+          <option *ngFor="let item of pronounData" [value]="item.name">{{item.name}}</option>
         </select>
       </div>
       <div class="input-container">
         <label>Occasion</label>
         <select formControlName="occasion" name="occasion">
-          <option disabled>Select occasion</option>
-          <option *ngFor="let item of occasionData" [selected]="item.name == occasion">{{item.name}}</option>
+          <option disabled value="">Select occasion</option>
+          <option *ngFor="let item of occasionData" [value]="item.name">{{item.name}}</option>
         </select>
       </div>
       <div class="input-container">
         <label>Relationship</label>
         <select formControlName="relationship" name="relationship">
-          <option disabled>Select relationship</option>
-          <option *ngFor="let item of relationshipData" [selected]="item.name == relationship">{{item.name}}</option>
+          <option disabled value="">Select relationship</option>
+          <option *ngFor="let item of relationshipData" [value]="item.name">{{item.name}}</option>
         </select>
       </div>
     </form>
@@ -40,13 +40,13 @@ import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
 export class GiftFilterComponent implements OnChanges{
 
   @Input()
-  pronoun = 'Select pronoun';
+  pronoun = '';
 
   @Input()
-  occasion = 'Select occasion';
+  occasion = '';
 
   @Input()
-  relationship = 'Select relationship';
+  relationship = '';
 
   @Output()
   applyFilters: EventEmitter<FilterData> = new EventEmitter()
@@ -71,9 +71,12 @@ export class GiftFilterComponent implements OnChanges{
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.filterForm.value.pronoun = this.pronoun;
-    this.filterForm.value.occasion = this.occasion;
-    this.filterForm.value.relationship = this.relationship;
+    console.log(this.pronoun, this.relationship, this.occasion, 'filter')
+    this.filterForm.setValue({
+      pronoun: this.pronoun,
+    occasion: this.occasion,
+    relationship: this.relationship
+    });
     console.log(this.pronoun, this.occasion, this.relationship);
     console.log(this.filterForm.value);
   }

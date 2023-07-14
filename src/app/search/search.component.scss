@@ -131,18 +131,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0px 0.5rem;
-  padding: 0.3rem 0.5rem;
-  box-shadow: 1px 1px 4px 0px #3864af;
-  background-color: #66bdd8;
+  margin: 2px;
+  padding: 8px 10px;
+  // box-shadow: 1px 1px 4px 0px #3864af;
+  // background-color: #66bdd8;
+  background-color: rgba(30, 100, 116, 0.1);
+  border: 1px solid transparent;
   border-radius: 6px;
 }
 .filter-item button {
+  width: 14px;
+  height: 14px;
   margin-left: 0.5rem;
   background: none;
   border: none;
-  font-size: large;
-  background-color: #3864af;
+  padding: 0px;
+  // background-color: #3864af;
+  color: white;
+  background-color: #1E6474;
   border-radius: 1rem;
 }
 .clear-filters {

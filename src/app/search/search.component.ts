@@ -134,7 +134,21 @@ export class SearchComponent implements AfterViewInit {
     if(this.pronoun != '') this.filterOutput.push(['gender', this.pronoun]);
     if(this.occasion != '') this.filterOutput.push(['occasion', this.occasion]);
     if(this.relationship != '') this.filterOutput.push(['relationship', this.relationship]);
-    if(this.sortValue != '') this.filterOutput.push(['orderby', this.sortValue]);
+    if(this.sortValue != '') {
+      if(this.sortValue == 'ASCPrice') {
+        this.filterOutput.push(['orderby', 'Price : Low to High']);
+      }else if(this.sortValue == 'DESCPrice') {
+        this.filterOutput.push(['orderby', 'Price : High to Low']);
+      } else if(this.sortValue == 'hotgift') {
+        this.filterOutput.push(['orderby', 'Hot gifts']);
+      } else if(this.sortValue == 'newest') {
+        this.filterOutput.push(['orderby', 'Newest']);
+      } else if(this.sortValue == 'discount_percentage') {
+        this.filterOutput.push(['orderby', 'Promotions']);
+      }  else {
+        this.filterOutput.push(['orderby', 'To&From MarketPlace']);
+      }
+    }
   }
 
   ngAfterViewInit(): void {

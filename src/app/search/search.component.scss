@@ -114,3 +114,39 @@
 .result-count {
   color: #777d8c;
 }
+
+// Filter area to show all selected filters for products with Clear Filters button
+.filter-output {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+}
+.filter-item-container {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+.filter-item {
+  color: #3864af;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 0.5rem;
+  padding: 0.3rem 0.5rem;
+  box-shadow: 1px 1px 4px 0px #3864af;
+  background-color: #66bdd8;
+  border-radius: 6px;
+}
+.filter-item button {
+  margin-left: 0.5rem;
+  background: none;
+  border: none;
+  font-size: large;
+  background-color: #3864af;
+  border-radius: 1rem;
+}
+.clear-filters {
+  background: none;
+  border: none;
+  color: rgb(212, 37, 102);
+}

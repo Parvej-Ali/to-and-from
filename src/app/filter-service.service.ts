@@ -60,16 +60,16 @@ export class FilterServiceService {
     this.relationShip = Object.assign(data);
   }
 
-  getPronounId(name: String): String {
-    return this.pronoun.find(ele => ele.name == name)?.id || '';
+  getPronounId(name: String): any {
+    return this.pronoun.find(ele => ele.name == name)?.id || null;
   }
 
-  getOccasionId(name: String): String {
-    return this.occasion.find(ele => ele.name == name)?.id || '';
+  getOccasionId(name: String): any {
+    return this.occasion.find(ele => ele.name == name)?.id || null;
   }
 
-  getRelationshipId(name: String): String {
-    return this.relationShip.find(ele => ele.name == name)?.id || '';
+  getRelationshipId(name: String): any {
+    return this.relationShip.find(ele => ele.name == name)?.id || null;
   }
 
   getPronounName(id: String): String {

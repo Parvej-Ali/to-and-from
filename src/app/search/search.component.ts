@@ -99,12 +99,10 @@ export class SearchComponent implements AfterViewInit {
   }
 
   getProductFilters(): void {
-    const f = this.filterService.loadPronoun().subscribe((data: any) => {
+    this.filterService.loadPronoun().subscribe((data: any) => {
       this.filterService.setPronoun(data.data);
       this.pronoun = this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString();
       this.showFilters();
-      console.log('page reload');
-      f.unsubscribe();
     });
     this.filterService.loadOccasion().subscribe((data: any) => {
       this.filterService.setOccasion(data.data);
@@ -169,11 +167,7 @@ export class SearchComponent implements AfterViewInit {
     this.relationship = data.relationship;
     this.filterReady = false;
 
-    this.router.navigate([],{
-      relativeTo: this.activatedRoute,
-      queryParams: params,
-      queryParamsHandling: 'merge'
-    });
+    this.navigateUrlWithMerge(params);
     this.showFilters();
   }
   
@@ -190,11 +184,7 @@ export class SearchComponent implements AfterViewInit {
     } else {
       params.orderby = value;
     }
-    this.router.navigate([],{
-      relativeTo: this.activatedRoute,
-      queryParams: params, 
-      queryParamsHandling: 'merge'
-    });
+    this.navigateUrlWithMerge(params);
     this.sortValue = value;
     this.showFilters();
   }
@@ -206,11 +196,7 @@ export class SearchComponent implements AfterViewInit {
     if(value[0] == 'occasion') {params.occasion = null;this.occasion = '';}
     if(value[0] == 'relationship') {params.relationship = null;this.relationship = '';}
     if(value[0] == 'orderby') {params.order = null;params.orderby = null;this.sortValue = '';}
-    this.router.navigate([],{
-      relativeTo: this.activatedRoute,
-      queryParams: params, 
-      queryParamsHandling: 'merge'
-    });
+    this.navigateUrlWithMerge(params);
   }
 
   clearFilters() {
@@ -226,6 +212,10 @@ export class SearchComponent implements AfterViewInit {
     this.sortValue = '';
     this.filterOutput = [];
 
+    this.navigateUrlWithMerge(params);
+  }
+  
+  private navigateUrlWithMerge(params: any) {
     this.router.navigate([],{
       relativeTo: this.activatedRoute,
       queryParams: params, 

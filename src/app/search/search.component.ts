@@ -65,11 +65,20 @@ export class SearchComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap.subscribe(value => {
-      // this.pronoun = this.filterService.getPronounName(value['gender'] || '').toString();
-      // this.occasion = this.filterService.getPronounName(value['occasion'] || '').toString();
-      // this.relationship = this.filterService.getPronounName(value['relationship'] || '').toString();
+    this.activatedRoute.queryParams.subscribe(value => {
+      this.pronoun = this.filterService.getPronounName(value['gender'] || '').toString();
+      this.occasion = this.filterService.getOccasionName(value['occasion'] || '').toString();
+      this.relationship = this.filterService.getRelationshipName(value['relationship'] || '').toString();
+
+      if(value['order'] == 'ASC') {
+        this.sortValue = 'ASCPrice';
+      }else if(value['order'] == 'DESC') {
+        this.sortValue = 'DESCPrice';
+      } else {
+        this.sortValue = value['orderby'] || '';
+      }
       console.log('Url params', value);
+      this.showFilters();
     });
   }
 

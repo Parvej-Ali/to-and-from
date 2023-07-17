@@ -1,1 +1,38 @@
-<p>gift-filter works!</p>
+<form
+  class="filter-form"
+  novalidate
+  [formGroup]="filterForm"
+  (ngSubmit)="OnSubmit()"
+>
+  <div class="filter-header">
+    <p>Filters</p>
+    <button type="submit">Apply Filters</button>
+  </div>
+  <div class="input-container">
+    <label>Gift For*</label>
+    <select formControlName="pronoun" name="pronoun">
+      <option disabled value="">Select pronoun</option>
+      <option *ngFor="let item of pronounData" [value]="item.name">
+        {{ item.name }}
+      </option>
+    </select>
+  </div>
+  <div class="input-container">
+    <label>Occasion</label>
+    <select formControlName="occasion" name="occasion">
+      <option disabled value="">Select occasion</option>
+      <option *ngFor="let item of occasionData" [value]="item.name">
+        {{ item.name }}
+      </option>
+    </select>
+  </div>
+  <div class="input-container">
+    <label>Relationship</label>
+    <select formControlName="relationship" name="relationship">
+      <option disabled value="">Select relationship</option>
+      <option *ngFor="let item of relationshipData" [value]="item.name">
+        {{ item.name }}
+      </option>
+    </select>
+  </div>
+</form>

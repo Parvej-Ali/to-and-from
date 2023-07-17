@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnInit} from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
 import { debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -8,75 +8,10 @@ import { FilterServiceService } from '../filter-service.service';
 
 @Component({
   selector: 'app-search',
-  template: `
-    <div class="header">
-      <div class="header-top">
-        <button class="gift-quiz">Take Our Gifting Quiz</button>
-        <div class="authenticate-btn">
-          <button class="sign-up">Sign Up</button>
-          |
-          <button class="login">Login</button>
-        </div> <!-- authenticate-btn -->
-      </div> <!-- header-top -->
-
-      <div class="header-bottom">
-        <div class="filter-container">
-          <button class="filter-btn" (click)="this.filterReady = !this.filterReady">Gift Filters</button>
-          <select class="sort-by" [value]="sortValue" (change)="sortBy(sortBy1.value)" #sortBy1>Sort By
-            <option value="">Sort By</option>
-            <option value="ASCPrice">Price : Low to High</option>
-            <option value="DESCPrice">Price : High to Low</option>
-            <option value="hotgift">Hot gifts</option>
-            <option value="newest">Newest</option>
-            <option value="discount_percentage">Promotions</option>
-            <option value="toandfrom">To&From MarketPlace</option>
-          </select> <!-- sort-by -->
-        </div> <!-- filter-container -->
-        <h1 class="logo">To&From</h1>
-
-        <div class="product-show">
-
-          <div class="search-container">
-            <form class="search-form" name="searchbar" (submit)="search($event)">
-              <span class="material-symbols-outlined">search</span>
-              <input type="text" (focus)="this.inputReady=true" (blur)="this.inputReady=false" placeholder="Search your gift..." #searchInput name="search">
-            </form> <!-- search-form -->
-          </div> <!-- search-container -->
-
-          <button><span class="material-symbols-outlined">inventory_2</span></button>
-          <button><span class="material-symbols-outlined">shopping_bag</span></button>
-        </div> <!-- product-show -->
-      </div> <!-- header-bottom -->
-
-      <app-gift-filter 
-        *ngIf="this.filterReady"
-        [pronoun]="pronoun"
-        [occasion]="occasion"
-        [relationship]="relationship"
-        (applyFilters)="applyFilters($event)">
-      </app-gift-filter>
-
-      <div *ngIf="this.inputReady" class="search-result">
-        <p>Search Results</p> <span class="result-count">results</span>
-      </div> <!-- search-result -->
-
-      <div class="filter-output">
-        <span>Filters : </span>
-        <div class="filter-item-container">
-          <div *ngFor="let item of filterOutput" class="filter-item">
-            {{item[1]}}
-            <button (click)="deleteFilter(item)"><span>&times;</span>
-              <!-- <span class="material-symbols-outlined">close</span> -->
-            </button>
-          </div>
-        </div>
-        <button class="clear-filters" (click)="clearFilters()">Clear Filters</button>
-      </div>
-    </div>
-  `,
+  templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements AfterViewInit {
+export class SearchComponent implements OnInit, AfterViewInit {
 
   @ViewChild('searchInput', {static: true}) searchInput: ElementRef = {} as ElementRef;
 
@@ -127,6 +62,15 @@ export class SearchComponent implements AfterViewInit {
     console.log('Relationship Id :', this.activatedRoute.snapshot.queryParamMap.get('relationship'));
     console.log('Order           :', this.activatedRoute.snapshot.queryParamMap.get('order'));
     console.log('OrderBy         :', this.activatedRoute.snapshot.queryParamMap.get('orderby'));
+  }
+
+  ngOnInit(): void {
+    this.activatedRoute.paramMap.subscribe(value => {
+      // this.pronoun = this.filterService.getPronounName(value['gender'] || '').toString();
+      // this.occasion = this.filterService.getPronounName(value['occasion'] || '').toString();
+      // this.relationship = this.filterService.getPronounName(value['relationship'] || '').toString();
+      console.log('Url params', value);
+    });
   }
 
   showFilters() {

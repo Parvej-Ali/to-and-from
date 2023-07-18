@@ -1,8 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit} from '@angular/core';
 import { fromEvent } from 'rxjs';
-import { ajax } from 'rxjs/ajax'
-import { tap, debounceTime, pluck, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { debounceTime, pluck, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FilterServiceService } from '../filter-service.service';
 import { HttpParams } from '@angular/common/http';
 
@@ -109,9 +108,8 @@ export class SearchComponent implements OnInit, AfterViewInit {
         if(value['maxPrice'] != null) pa = pa.set('maxPrice',value['maxPrice']);
         console.log(pa.toString());
 
-        return ajax.getJSON(`https://api.toandfrom.com/v2/product?${pa.toString()}&limit=100&offset=0`);
-      }),
-        tap()
+        return this.filterService.getProductsData(pa.toString());
+      })
     ).subscribe((value: any) => {
       console.log(value.data);
       this.productData = value.data
@@ -151,9 +149,9 @@ export class SearchComponent implements OnInit, AfterViewInit {
       debounceTime(500),
       pluck('target','value'),
       distinctUntilChanged(),
-      switchMap( value =>
-        ajax.getJSON(`https://api.toandfrom.com/v2/product?search=${value}&limit=4`)
-      )
+      switchMap( value => {
+        return this.filterService.getProductsData(`search=${value}`, 4);
+      })
     ).subscribe(value => console.log(value));
   }
 

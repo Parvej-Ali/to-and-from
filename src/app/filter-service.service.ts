@@ -36,6 +36,10 @@ export class FilterServiceService {
     });
   }
 
+  getProductsData(query: string, limit: number = 100): Observable<any> {
+    return this.http.get<any>(`https://api.toandfrom.com/v2/product?${query}&limit=${limit}&offset=0`);
+  }
+
   loadPronoun(): Observable<any> {
     return this.http.get<any>(this.pronounUrl)
   }

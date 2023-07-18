@@ -94,14 +94,14 @@
 </div>
 
 <div class="product-container">
-  <div class="product-item">
+  <div *ngFor="let item of productData" class="product-item">
     <img
-      src="https://api.toandfrom.com/v2/image?b=prod-toandfrom&p=product_image%2F1647311782-0.webp"
+      [src]="item.image[0].link"
     />
     <div class="product-item-detail-container">
-      <p class="grey-header">Gift Set</p>
-      <p class="grey-sub-header">Vinglance</p>
-      <p class="grey-price">$13.95</p>
+      <p class="grey-header">{{ item.name }}</p>
+      <p class="grey-sub-header">{{ item.brandName }}</p>
+      <p class="grey-price">${{ item.price }}</p>
     </div>
   </div>
 </div>

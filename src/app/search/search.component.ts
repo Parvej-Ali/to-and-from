@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit} from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
-import { debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { tap, debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FilterServiceService } from '../filter-service.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-search',
@@ -22,6 +23,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
   formInput = this.filterService.getFilterForm();
 
   filterOutput: any[] = [];
+  productData: any = [];
 
   constructor(
     private filterService: FilterServiceService,
@@ -86,7 +88,26 @@ export class SearchComponent implements OnInit, AfterViewInit {
       }
       console.log('Url params', value);
       this.showFilters();
+
     });
+    this.activatedRoute.queryParams.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(value => {
+        let pa = new HttpParams();
+        if(value['gender'] != null) pa = pa.set('gender',value['gender']);
+        if(value['occasion'] != null) pa = pa.set('occasion',value['occasion']);
+        if(value['relationship'] != null) pa = pa.set('relationship',value['relationship']);
+        if(value['orderby'] != null) pa = pa.set('orderby',value['orderby']);
+        if(value['order'] != null) pa = pa.set('order',value['order']);
+        if(value['minPrice'] != null) pa = pa.set('minPrice',value['minPrice']);
+        if(value['maxPrice'] != null) pa = pa.set('maxPrice',value['maxPrice']);
+        console.log(pa.toString());
+
+        return ajax.getJSON(`https://api.toandfrom.com/v2/product?${pa.toString()}&limit=100&offset=0`);
+      }),
+        tap()
+    ).subscribe((value: any) => {console.log(value.data);this.productData = value.data});
   }
 
   showFilters() {

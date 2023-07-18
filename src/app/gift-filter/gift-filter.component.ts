@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { FilterServiceService } from '../filter-service.service';
 import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
 import { FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-gift-filter',
@@ -25,9 +26,19 @@ export class GiftFilterComponent implements OnChanges{
   occasionData: FilterOptions[] = [];
   relationshipData: FilterOptions[] = [];
 
+  behavior = new BehaviorSubject('');
+
   constructor(
     private filterService: FilterServiceService
   ) {
+    this.behavior.subscribe({
+      next: (v) => console.log(v)
+    });
+
+    this.behavior.next('F');
+
+    console.log(this.behavior.value);
+
     console.log(this.filterForm?.value);
     this.pronounData = this.filterService.getPronoun();
     this.occasionData = this.filterService.getOccasion();

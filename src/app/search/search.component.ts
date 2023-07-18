@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, OnInit} from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
-import { tap, debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { tap, debounceTime, pluck, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FilterServiceService } from '../filter-service.service';
 import { HttpParams } from '@angular/common/http';
@@ -18,6 +18,8 @@ export class SearchComponent implements OnInit, AfterViewInit {
   filterReady = false;
   inputReady = false;
   priceRange = false;
+  loading = false;
+  productCount = 0;
 
   sortValue = '';
   formInput = this.filterService.getFilterForm();
@@ -34,10 +36,12 @@ export class SearchComponent implements OnInit, AfterViewInit {
   }
 
   getProductFilters(): void {
-    this.filterService.loadPronoun().subscribe((data: any) => {
-      this.filterService.setPronoun(data.data);
-      this.formInput.controls['pronoun'].setValue(this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString());
-      this.showFilters();
+    this.filterService.loadPronoun().subscribe({
+      next: (data: any) => {
+        this.filterService.setPronoun(data.data);
+        this.formInput.controls['pronoun'].setValue(this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString());
+        this.showFilters();
+      }
     });
     this.filterService.loadOccasion().subscribe((data: any) => {
       this.filterService.setOccasion(data.data);
@@ -73,7 +77,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(value => {
-      this.formInput.controls['pronoun'].setValue(this.filterService.getPronounName(value['gender'] ||'').toString());
+      this.formInput.get('pronoun').setValue(this.filterService.getPronounName(value['gender'] ||'').toString());
       this.formInput.controls['occasion'].setValue(this.filterService.getOccasionName(value['occasion'] || '').toString());
       this.formInput.controls['relationship'].setValue(this.filterService.getRelationshipName(value['relationship'] || '').toString());
       if(value['minPrice'] != null) { this.formInput.rangeStart = value['minPrice']; this.priceRange = true }
@@ -88,12 +92,13 @@ export class SearchComponent implements OnInit, AfterViewInit {
       }
       console.log('Url params', value);
       this.showFilters();
-
     });
+    
     this.activatedRoute.queryParams.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap(value => {
+        this.loading = true;
         let pa = new HttpParams();
         if(value['gender'] != null) pa = pa.set('gender',value['gender']);
         if(value['occasion'] != null) pa = pa.set('occasion',value['occasion']);
@@ -107,7 +112,12 @@ export class SearchComponent implements OnInit, AfterViewInit {
         return ajax.getJSON(`https://api.toandfrom.com/v2/product?${pa.toString()}&limit=100&offset=0`);
       }),
         tap()
-    ).subscribe((value: any) => {console.log(value.data);this.productData = value.data});
+    ).subscribe((value: any) => {
+      console.log(value.data);
+      this.productData = value.data
+      this.loading = false;
+      this.productCount = this.productData.length;
+    });
   }
 
   showFilters() {
@@ -209,7 +219,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
       orderby: null
     };
     this.filterOutput = [];
-    this.formInput = this.filterService.getFilterForm();
+    this.formInput = this.filterService.getFilterForm().reset();
 
     this.navigateUrlWithMerge(params);
   }

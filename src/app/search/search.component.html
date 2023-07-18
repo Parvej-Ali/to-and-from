@@ -12,7 +12,7 @@
 
   <div class="header-bottom">
     <div class="filter-container">
-      <button class="filter-btn" (click)="this.filterReady = !this.filterReady;">
+      <button class="filter-btn" (click)="this.filterReady = !this.filterReady">
         Gift Filters
       </button>
       <select
@@ -63,6 +63,8 @@
   </div>
   <!-- header-bottom -->
 
+  <mat-progress-bar *ngIf="this.loading" mode="indeterminate"></mat-progress-bar>
+
   <app-gift-filter
     *ngIf="this.filterReady"
     [formDemo]="formInput"
@@ -93,11 +95,10 @@
   </div>
 </div>
 
+<p class="product-count">Total products : {{ productCount }}</p>
 <div class="product-container">
   <div *ngFor="let item of productData" class="product-item">
-    <img
-      [src]="item.image[0].link"
-    />
+    <img [src]="item.image[0].link" />
     <div class="product-item-detail-container">
       <p class="grey-header">{{ item.name }}</p>
       <p class="grey-sub-header">{{ item.brandName }}</p>

@@ -24,7 +24,7 @@ export class FilterServiceService {
   constructor(
     private formBuilder: FormBuilder,
     private http: HttpClient
-  ) { }
+  ) {}
 
   getFilterForm(): any {
     return this.formBuilder.group({

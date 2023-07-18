@@ -156,11 +156,16 @@
   border: none;
   color: rgb(212, 37, 102);
 }
+.product-count {
+  padding: 160px 16px 16px 16px;
+  font-family: CircularXX;
+  font-size: medium;
+  text-align: end;
+}
 .product-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  padding-top: 150px;
 }
 .product-item {
   padding: 1rem;

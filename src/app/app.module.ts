@@ -9,6 +9,7 @@ import { GiftFilterComponent } from './gift-filter/gift-filter.component';
 import { FilterServiceService } from './filter-service.service';
 import { AppRoutingModule } from './app-routing.module';
 import { MatSliderModule } from '@angular/material/slider';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MatSliderModule } from '@angular/material/slider';
     ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
-    MatSliderModule
+    MatSliderModule,
+    MatProgressBarModule
   ],
   providers: [FilterServiceService],
   bootstrap: [AppComponent]

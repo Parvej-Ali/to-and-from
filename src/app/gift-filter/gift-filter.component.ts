@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { FilterServiceService } from '../filter-service.service';
 import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-gift-filter',
@@ -12,53 +12,39 @@ import { FilterData, FilterOptions } from '../interfaces/filter-interfaces';
 export class GiftFilterComponent implements OnChanges{
 
   @Input()
-  pronoun = '';
+  formDemo!: FormGroup;
 
-  @Input()
-  occasion = '';
-
-  @Input()
-  relationship = '';
+  filterForm = this.filterService.getFilterForm();
 
   @Output()
-  applyFilters: EventEmitter<FilterData> = new EventEmitter()
+  applyFilters: EventEmitter<FilterData> = new EventEmitter();
+
+  priceContainer = '--';
 
   pronounData: FilterOptions[] = [];
   occasionData: FilterOptions[] = [];
   relationshipData: FilterOptions[] = [];
 
-  filterForm = this.formBuilder.group({
-    pronoun: this.pronoun,
-    occasion: this.occasion,
-    relationship: this.relationship
-  });
-
   constructor(
-    private formBuilder: FormBuilder,
     private filterService: FilterServiceService
   ) {
+    console.log(this.filterForm?.value);
     this.pronounData = this.filterService.getPronoun();
     this.occasionData = this.filterService.getOccasion();
     this.relationshipData = this.filterService.getRelationship();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.pronoun, this.relationship, this.occasion, 'filter')
-    this.filterForm.setValue({
-      pronoun: this.pronoun,
-    occasion: this.occasion,
-    relationship: this.relationship
-    });
-    console.log(this.pronoun, this.occasion, this.relationship);
-    console.log(this.filterForm.value);
+    this.filterForm.setValue(changes['formDemo'].currentValue.value);
+    console.log(this.filterForm === this.formDemo)
+    console.log('OnChange : ', this.filterForm.value);
   }
 
   OnSubmit(): void {
-    let data: FilterData = Object.assign({
-      pronoun: this.filterForm.value.pronoun,
-      occasion: this.filterForm.value.occasion,
-      relationship: this.filterForm.value.relationship
-    });
-    this.applyFilters.emit(data);
+    this.applyFilters.emit(Object.assign(this.filterForm));
+  }
+
+  formatLabel(value: Number): string {
+    return '$'+value;
   }
 }

@@ -12,7 +12,7 @@
 
   <div class="header-bottom">
     <div class="filter-container">
-      <button class="filter-btn" (click)="this.filterReady = !this.filterReady">
+      <button class="filter-btn" (click)="this.filterReady = !this.filterReady;">
         Gift Filters
       </button>
       <select
@@ -65,9 +65,7 @@
 
   <app-gift-filter
     *ngIf="this.filterReady"
-    [pronoun]="pronoun"
-    [occasion]="occasion"
-    [relationship]="relationship"
+    [formDemo]="formInput"
     (applyFilters)="applyFilters($event)"
   >
   </app-gift-filter>
@@ -92,5 +90,18 @@
     <button class="clear-filters" (click)="clearFilters()">
       Clear Filters
     </button>
+  </div>
+</div>
+
+<div class="product-container">
+  <div class="product-item">
+    <img
+      src="https://api.toandfrom.com/v2/image?b=prod-toandfrom&p=product_image%2F1647311782-0.webp"
+    />
+    <div class="product-item-detail-container">
+      <p class="grey-header">Gift Set</p>
+      <p class="grey-sub-header">Vinglance</p>
+      <p class="grey-price">$13.95</p>
+    </div>
   </div>
 </div>

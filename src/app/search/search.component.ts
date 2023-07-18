@@ -2,7 +2,6 @@ import { Component, AfterViewInit, ViewChild, ElementRef, OnInit} from '@angular
 import { fromEvent } from 'rxjs';
 import { ajax } from 'rxjs/ajax'
 import { debounceTime, pluck, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { FilterData } from '../interfaces/filter-interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterServiceService } from '../filter-service.service';
 
@@ -17,11 +16,10 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   filterReady = false;
   inputReady = false;
+  priceRange = false;
 
-  pronoun = '';
-  occasion = '';
-  relationship = '';
   sortValue = '';
+  formInput = this.filterService.getFilterForm();
 
   filterOutput: any[] = [];
 
@@ -36,19 +34,24 @@ export class SearchComponent implements OnInit, AfterViewInit {
   getProductFilters(): void {
     this.filterService.loadPronoun().subscribe((data: any) => {
       this.filterService.setPronoun(data.data);
-      this.pronoun = this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString();
+      this.formInput.controls['pronoun'].setValue(this.filterService.getPronounName(this.activatedRoute.snapshot.queryParamMap.get('gender')||'').toString());
       this.showFilters();
     });
     this.filterService.loadOccasion().subscribe((data: any) => {
       this.filterService.setOccasion(data.data);
-      this.occasion = this.filterService.getOccasionName(this.activatedRoute.snapshot.queryParamMap.get('occasion') || '').toString();
+      this.formInput.controls['occasion'].setValue(this.filterService.getOccasionName(this.activatedRoute.snapshot.queryParamMap.get('occasion') || '').toString());
       this.showFilters();
     })
     this.filterService.loadRelationship().subscribe((data: any) => {
       this.filterService.setRelationship(data.data);
-      this.relationship = this.filterService.getRelationshipName(this.activatedRoute.snapshot.queryParamMap.get('relationship') || '').toString();
+      this.formInput.controls['relationship'].setValue(this.filterService.getRelationshipName(this.activatedRoute.snapshot.queryParamMap.get('relationship') || '').toString());
       this.showFilters();
     });
+
+
+    if(this.activatedRoute.snapshot.queryParamMap.get('minPrice') != null) this.formInput.rangeStart = this.activatedRoute.snapshot.queryParamMap.get('minPrice');
+    if(this.activatedRoute.snapshot.queryParamMap.get('maxPrice') != null) this.formInput.rangeStart = this.activatedRoute.snapshot.queryParamMap.get('maxPrice');
+
 
     if(this.activatedRoute.snapshot.queryParamMap.get('order') == 'ASC') {
       this.sortValue = 'ASCPrice';
@@ -62,13 +65,17 @@ export class SearchComponent implements OnInit, AfterViewInit {
     console.log('Relationship Id :', this.activatedRoute.snapshot.queryParamMap.get('relationship'));
     console.log('Order           :', this.activatedRoute.snapshot.queryParamMap.get('order'));
     console.log('OrderBy         :', this.activatedRoute.snapshot.queryParamMap.get('orderby'));
+    console.log('MinPrice        :', this.activatedRoute.snapshot.queryParamMap.get('minPrice'));
+    console.log('MaxPrice        :', this.activatedRoute.snapshot.queryParamMap.get('maxPrice'));
   }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(value => {
-      this.pronoun = this.filterService.getPronounName(value['gender'] || '').toString();
-      this.occasion = this.filterService.getOccasionName(value['occasion'] || '').toString();
-      this.relationship = this.filterService.getRelationshipName(value['relationship'] || '').toString();
+      this.formInput.controls['pronoun'].setValue(this.filterService.getPronounName(value['gender'] ||'').toString());
+      this.formInput.controls['occasion'].setValue(this.filterService.getOccasionName(value['occasion'] || '').toString());
+      this.formInput.controls['relationship'].setValue(this.filterService.getRelationshipName(value['relationship'] || '').toString());
+      if(value['minPrice'] != null) { this.formInput.rangeStart = value['minPrice']; this.priceRange = true }
+      if(value['maxPrice'] != null) this.formInput.rangeEnd = value['maxPrice'];
 
       if(value['order'] == 'ASC') {
         this.sortValue = 'ASCPrice';
@@ -84,9 +91,10 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   showFilters() {
     this.filterOutput = [];
-    if(this.pronoun != '') this.filterOutput.push(['gender', this.pronoun]);
-    if(this.occasion != '') this.filterOutput.push(['occasion', this.occasion]);
-    if(this.relationship != '') this.filterOutput.push(['relationship', this.relationship]);
+    if(this.formInput.value.pronoun != '') this.filterOutput.push(['gender', this.formInput.value.pronoun]);
+    if(this.formInput.value.occasion != '') this.filterOutput.push(['occasion', this.formInput.value.occasion]);
+    if(this.formInput.value.relationship != '') this.filterOutput.push(['relationship', this.formInput.value.relationship]);
+    if(this.priceRange == true) this.filterOutput.push(['priceRange', 'Budget $'+this.formInput.value.rangeStart+' - $'+this.formInput.value.rangeEnd]);
     if(this.sortValue != '') {
       if(this.sortValue == 'ASCPrice') {
         this.filterOutput.push(['orderby', 'Price : Low to High']);
@@ -122,17 +130,19 @@ export class SearchComponent implements OnInit, AfterViewInit {
     event.preventDefault();
   }
 
-  applyFilters(data: FilterData){
-    console.log(data);
+  applyFilters(data: any){
+    console.log(data.value);
 
-    let params: {gender?: any, occasion?: any, relationship?: any} = {};
-    params.gender = this.filterService.getPronounId(data.pronoun);
-    params.occasion = this.filterService.getOccasionId(data.occasion);
-    params.relationship = this.filterService.getRelationshipId(data.relationship);
-    this.pronoun = data.pronoun;
-    this.occasion = data.occasion;
-    this.relationship = data.relationship;
+    let params: {gender?: any, occasion?: any, relationship?: any, minPrice?: any, maxPrice?: any} = {};
+    params.gender = this.filterService.getPronounId(data.value.pronoun);
+    params.occasion = this.filterService.getOccasionId(data.value.occasion);
+    params.relationship = this.filterService.getRelationshipId(data.value.relationship);
+    params.minPrice = data.value.rangeStart;
+    params.maxPrice = data.value.rangeEnd;
+    this.priceRange = true;
+    this.formInput = data;
     this.filterReady = false;
+    console.log('Form Input : ',this.formInput.value);
 
     this.navigateUrlWithMerge(params);
     this.showFilters();
@@ -157,27 +167,28 @@ export class SearchComponent implements OnInit, AfterViewInit {
   }
 
   deleteFilter(value: string) {
-    this.filterOutput = this.filterOutput.filter(item => item != value);
-    let params: {gender?: any, occasion?: any, relationship?: any, order?: any, orderby?: any} = {};
-    if(value[0] == 'gender') {params.gender = null;this.pronoun = '';}
-    if(value[0] == 'occasion') {params.occasion = null;this.occasion = '';}
-    if(value[0] == 'relationship') {params.relationship = null;this.relationship = '';}
+    this.filterOutput = this.filterOutput.filter(item => item[0] != value[0]);
+    let params: {gender?: any, occasion?: any, relationship?: any, minPrice?: any, maxPrice?: any, order?: any, orderby?: any} = {};
+    if(value[0] == 'gender') {params.gender = null;this.formInput.value.pronoun = '';}
+    if(value[0] == 'occasion') {params.occasion = null;this.formInput.value.occasion = '';}
+    if(value[0] == 'relationship') {params.relationship = null;this.formInput.value.relationship = '';}
     if(value[0] == 'orderby') {params.order = null;params.orderby = null;this.sortValue = '';}
+    if(value[0] == 'priceRange') {params.minPrice = null;params.maxPrice = null;this.priceRange = false}
     this.navigateUrlWithMerge(params);
   }
 
   clearFilters() {
-    let params: {gender?: any, occasion?: any, relationship?: any, order?: any, orderby?: any} = {};
-    params.gender = null;
-    this.pronoun = '';
-    params.occasion = null;
-    this.occasion = '';
-    params.relationship = null;
-    this.relationship = '';
-    params.order = null;
-    params.orderby = null;
-    this.sortValue = '';
+    let params: {gender?: any, occasion?: any, relationship?: any, minPrice?: any, maxPrice?: any, order?: any, orderby?: any} = {
+      gender:null,
+      occasion:null,
+      relationship:null,
+      minPrice: null,
+      maxPrice: null,
+      order: null,
+      orderby: null
+    };
     this.filterOutput = [];
+    this.formInput = this.filterService.getFilterForm();
 
     this.navigateUrlWithMerge(params);
   }

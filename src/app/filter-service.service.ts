@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FilterOptions } from './interfaces/filter-interfaces';
 import { Observable } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,19 @@ export class FilterServiceService {
   relationShip: FilterOptions[] = [];
 
   constructor(
+    private formBuilder: FormBuilder,
     private http: HttpClient
   ) { }
+
+  getFilterForm(): any {
+    return this.formBuilder.group({
+      pronoun: '',
+      occasion: '',
+      relationship: '',
+      rangeStart: 20,
+      rangeEnd: 250
+    });
+  }
 
   loadPronoun(): Observable<any> {
     return this.http.get<any>(this.pronounUrl)

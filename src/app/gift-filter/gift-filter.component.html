@@ -3,6 +3,7 @@
   novalidate
   [formGroup]="filterForm"
   (ngSubmit)="OnSubmit()"
+  #form
 >
   <div class="filter-header">
     <p>Filters</p>
@@ -34,5 +35,35 @@
         {{ item.name }}
       </option>
     </select>
+  </div>
+  <hr class="filter-form-divider" />
+  <div class="price-filter-container">
+    <div class="price-filter-label">
+      <p>Price range</p>
+      <button
+        (click)="
+          $event.preventDefault();
+          this.priceContainer = this.priceContainer == '--' ? '+' : '--'
+        "
+      >
+        {{ this.priceContainer }}
+      </button>
+    </div>
+    <mat-slider
+      *ngIf="this.priceContainer == '--'"
+      class="filter-slider"
+      min="0"
+      max="1000"
+      [displayWith]="formatLabel"
+      discrete
+    >
+      <input formControlName="rangeStart" value="20" matSliderStartThumb />
+      <input formControlName="rangeEnd" value="250" matSliderEndThumb />
+    </mat-slider>
+    <div *ngIf="this.priceContainer == '--'" class="price-filter-range">
+      <span> $0 </span>
+      <span> $500 </span>
+      <span> $1000 </span>
+    </div>
   </div>
 </form>

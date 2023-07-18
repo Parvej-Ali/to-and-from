@@ -8,6 +8,7 @@ import { SearchComponent } from './search/search.component';
 import { GiftFilterComponent } from './gift-filter/gift-filter.component';
 import { FilterServiceService } from './filter-service.service';
 import { AppRoutingModule } from './app-routing.module';
+import { MatSliderModule } from '@angular/material/slider';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatSliderModule
   ],
   providers: [FilterServiceService],
   bootstrap: [AppComponent]

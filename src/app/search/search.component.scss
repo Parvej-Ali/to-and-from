@@ -126,6 +126,7 @@
   flex-grow: 1;
   align-items: center;
   padding: 0px 8px ;
+  flex-wrap: wrap;
 }
 .filter-item {
   color: #3864af;
@@ -154,4 +155,35 @@
   background: none;
   border: none;
   color: rgb(212, 37, 102);
+}
+.product-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding-top: 150px;
+}
+.product-item {
+  padding: 1rem;
+
+}
+.product-item img {
+  height: 230px;
+}
+.product-item-detail-container {
+  padding: 8px 6px;
+}
+.grey-header {
+  color: rgb(30, 100, 116);
+  overflow: hidden;
+}
+.grey-sub-header {
+  font-size: 12px;
+  line-height: 15px;
+  color: rgb(103, 113, 139);
+  margin: 4px 0px;
+}
+.grey-price {
+  font-size: 12px;
+  line-height: 15px;
+  color: rgb(40, 44, 63);
 }

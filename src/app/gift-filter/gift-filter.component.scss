@@ -49,3 +49,35 @@
     background-color: white;
     color: rgba(0, 0, 0, 0.36);
 }
+.filter-form-divider {
+    width: 100%;
+    border: 0.5px solid rgb(230, 230, 230);
+    margin: 20px 0px;
+}
+.price-filter-container {
+
+}
+.price-filter-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.price-filter-label p {
+    font-family: CircularXX;
+    font-size: medium;
+}
+.price-filter-label button {
+    border: none;
+    background: none;
+}
+.filter-slider {
+    width: 90%;
+    margin: 0px 5%;
+}
+.price-filter-range {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: rgb(68, 68, 68);
+}
